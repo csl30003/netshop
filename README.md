@@ -7,6 +7,6 @@ Python+Django+MySQL+Redis的网上商城
 
 启动Redis
 
-python manage.py makemigrations
-python manage.py migrate
-python manage.py runserver
+python manage.py makemigrations<br />
+python manage.py migrate<br />
+python manage.py runserver<br />
