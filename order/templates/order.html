@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}结算页面{% endblock %}
+
+
+{% block headerjs %}
+
+<link rel="stylesheet" type="text/css" href="/static/public.css">
+<link rel="stylesheet" type="text/css" href="/static/proList.css">
+
+{% endblock %}
+
+{% block main %}
+
+
+<div class="order cart mt">
+    <!-----------------site------------------->
+    <div class="site">
+        <p class="wrapper clearfix">
+            <span class="fl">订单确认</span>
+        </p>
+    </div>
+    <!-----------------orderCon------------------->
+    <div class="orderCon wrapper clearfix">
+        <div class="orderL fl">
+            <!--------h3---------------->
+            <h3>收件信息</h3>
+            <!--------addres---------------->
+            <div class="addres clearfix">
+                <div class="addre fl on">
+                    <div class="tit clearfix">
+                        <p class="fl"><span id="name_address">{{ address.aname }}</span>
+                            <span class="default">[默认地址]</span>
+                        </p>
+                    </div>
+                    <div class="addCon">
+                        <p id="address_address">{{ address.addr }}</p>
+                        <p id="phone_address">{{ address.aphone }}</p>
+                    </div>
+                </div>
+            </div>
+            <h3>支付方式</h3>
+            <!--------way---------------->
+            <div class="way clearfix">
+                <img class="on" src="/static/way01.jpg" name="alipay">
+                <img src="/static/way02.jpg" name="wechat">
+                <img src="/static/way03.jpg" name="union">
+
+            </div>
+
+            <!--------dis---------------->
+
+        </div>
+        <div class="orderR fr">
+            <div class="msg">
+                <h3>订单内容</h3>
+                <!--------ul---------------->
+
+                {% for cm in cartitemObjList %}
+
+                <ul class="clearfix" goodsid="{{ cm.goodsid }}" sizeid="{{ cm.sizeid }}" colorid="{{ cm.colorid }}"
+                    count="{{ cm.count }}">
+                    <li class="fl">
+                        <img src="/media/{{ cm.getColor.colorurl }}" width="87px" height="87px">
+                    </li>
+                    <li class="fl">
+                        <p>{{ cm.getGoods.gname }}</p>
+                        <p>颜色分类：{{ cm.getColor.colorname }}</p>
+                        <p>数量：{{ cm.count }}</p>
+                    </li>
+                    <li class="fr">￥{{ cm.getTotalPrice }}</li>
+                </ul>
+                {% endfor %}
+
+
+            </div>
+            <!--------tips---------------->
+            <div class="tips">
+                <p><span class="fl">商品金额：</span><span class="fr">￥{{ totalPrice }}</span></p>
+                <p><span class="fl">优惠金额：</span><span class="fr">￥0.00</span></p>
+                <p><span class="fl">运费：</span><span class="fr">免运费</span></p>
+            </div>
+            <!--------tips count---------------->
+            <div class="count tips">
+                <p><span class="fl">合计：</span><span class="fr" id="totalPriceId">￥{{ totalPrice }}</span></p>
+            </div>
+            <!--<input type="button" name="" value="去支付"> -->
+            <a href="http://127.0.0.1:8000/order/order.html" id="pay" class="pay" onclick="javascript:void(0);">去支付</a>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+
+{% block footerjs %}
+
+
+<script src="/static/public.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/pro.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/user.js" type="text/javascript" charset="utf-8"></script>
+
+<script>
+        $("#pay").click(function(){
+            var cartitems = []
+
+            $.each($('.msg ul'),function(index,item){
+                cartitems.push({"goodsid":$(item).attr('goodsid'),
+                                "sizeid":$(item).attr('sizeid'),
+                                "colorid":$(item).attr('colorid'),
+                                "count":$(item).attr('count')
+                                })
+
+            })
+
+
+
+            //拼接请求参数
+            var params = 'address={{ address.id }}&payway='+$('.way .on').attr('name')+'&cartitems='+JSON.stringify(cartitems)+'&totalPrice='+$('#totalPriceId').html();
+
+            //拼接请求地址
+            var url = '/order/topay/?'+params
+
+            $(this).attr('href',url)
+
+
+        })
+
+
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}
+用户登录页面
+{% endblock %}
+
+
+{% block headerjs %}
+
+    <script type="text/javascript" src="/static/md5-min.js"></script>
+
+{% endblock %}
+
+
+{% block main %}
+
+
+     <div class="login-body">
+        <div class="login-card">
+            <div class="login-top">
+                <h4 style="color:#FF0000">新用户登录</h4>
+                <h5>尊敬的用户，欢迎您回来！</h5>
+            </div>
+            <div class="login-bottom">
+               <form method="post" action="/user/login/" onsubmit="return login();">
+                   <input type="hidden" name="time" id="time">
+                    <div class="login-input-box">
+                        {% csrf_token %}
+                    <input type="text" id="uname" name="uname" value="" class="login-admin active" placeholder="邮箱登录">
+                    <span style="color:red;" id="aSpan"></span>
+
+                    <input type="password" id="pwd" name="pwd" value="" class="login-password">
+                    <span style="color:red;" id="pSpan"></span>
+
+                    <input type="text" style="height:36px;width: 100px;" id="code" onblur="checkCode(this.value)"><img src="/user/loadCode.jpg" onclick="changeCode(this)"><span style="color:red;" id="cSpan"></span>
+
+                    <input type="hidden" name="redirect" value="{{ redirect }}">
+                    <input type="hidden" name="cartitems" value="{{ cartitems }}">
+
+                    <button class="login-btn" style="color: white;text-decoration: none;cursor: pointer">登录</button>
+                </div>
+               </form>
+                <div class="login-img">
+                    <img src="/static/login_05.png" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+
+{% block footerjs %}
+
+
+    <script>
+        //切换验证码
+        function changeCode(imgObj){
+            imgObj.src = '/user/loadCode.jpg?time='+new Date().getTime();
+        }
+
+
+
+
+        function isEmail(str){
+            var reg = /^[a-zA-Z0-9_-]{6,}@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+            return reg.test(str);
+        }
+
+        function login(){
+            //获取输入框的值
+            var account = $('#uname').val();
+            var password = $('#pwd').val();
+
+            //简单校验
+            if(account.length<6||!isEmail(account)){
+                $('#aSpan').text('邮箱长度不能小于六位');
+                return false;
+            }
+
+            if(password.length<6){
+                $('#pSpan').text('密码长度不能小于六位');
+                return false;
+            }
+
+            var code = $('#code').val();
+            var cflag = checkCode(code);
+
+            if(!cflag){
+                $('#cSpan').text('×');
+                return false;
+            }
+
+
+
+            var hex_pwd = hex_md5(password);
+
+            //var hex_pwd = hex_md5(password+time)
+            $('#pwd').val(hex_pwd);
+
+            return true
+
+        }
+
+
+
+
+
+        function checkCode(txt){
+            var cflag = false;
+            $.ajax({
+                url:'/user/checkcode/',
+                type:'get',
+                data:{'code':txt},
+                async:false,
+                success:function(result){
+                    var flag = result.checkFlag;
+                    if(flag){
+                        cflag = true;
+                        $('#cSpan').text('√');
+                    }else{
+                        $('#cSpan').text('×');
+                    }
+                }
+            })
+
+            return cflag;
+
+        }
+
+    </script>
+
+
+
+
+{% endblock %}

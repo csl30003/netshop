@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}用户中心{% endblock %}
+
+{% block main %}
+{% csrf_token %}
+<div class="Bott">
+    <div class="wrapper clearfix" style="margin: 0 auto">
+        <div class="zuo fl" style="margin-left: 100px">
+            <h3>
+                <a href="/"><img src="/static/{{suser.head_portrait}}" width="150" height="150"></a>
+                <p class="clearfix"><span class="fl">[{{ suser.uname}}]</span><span class="fr logout">[退出登录]</span></p>
+            </h3>
+            <div>
+                <ul>
+                    <li><a href="http://127.0.0.1:8000/user/usercenter/#">我的订单</a></li>
+                </ul>
+                <ul>
+                    <li><a href="/user/address/">地址管理</a></li>
+                </ul>
+                <ul>
+                    <li><a href="/">回到首页</a></li>
+                </ul>
+
+            </div>
+        </div>
+        <div class="you fl">
+
+            <div class="tx clearfix">
+                <div class="fl clearfix">
+                    <a href="/user/center/#" class="fl"><img src="/static/{{suser.head_portrait}}" width="90"
+                                                             height="90"></a>
+                    <p class="fl"><span>{{ suser.uname }}</span><a href="/user/profile/#">修改个人信息&gt;</a></p>
+                </div>
+                <div class="fr">绑定邮箱：{{ suser.uname }}</div>
+            </div>
+            <div class="bott">
+                <div class="clearfix">
+                    <a href="http://127.0.0.1:8000/user/usercenter/#" class="fl"><img src="/static/gxin1.jpg"></a>
+                    <p class="fl"><span>待支付的订单：<strong>{{To_be_paid}}</strong></span>
+                        <a href="http://127.0.0.1:8000/user/usercenter/#">查看待支付订单&gt;</a>
+                    </p>
+                </div>
+                <div class="clearfix">
+                    <a href="http://127.0.0.1:8000/user/usercenter/#" class="fl"><img src="/static/gxin2.jpg"></a>
+                    <p class="fl"><span>待收货的订单：<strong>{{Goods_to_be_received}}</strong></span>
+                        <a href="http://127.0.0.1:8000/user/usercenter/#">查看待收货订单&gt;</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block footerjs %}
+
+<script>
+    $('.logout').click(function () {
+
+        $.ajax({
+            type:'post',
+            url:'/user/logout/',
+            data:'csrfmiddlewaretoken='+$('input[name="csrfmiddlewaretoken"]').val(),
+            success:function(result){
+                if(result.delflag){
+                    window.location.href='/user/login/'
+                }
+
+            }
+        })
+    })
+
+</script>
+
+
+{% endblock %}

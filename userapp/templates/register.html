@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}注册页面{% endblock %}
+
+{% block headerjs %}
+    <script type="text/javascript" src="/static/md5-min.js"></script>
+{% endblock %}
+
+{% block main %}
+
+     <div class="login-body">
+        <div class="login-card">
+            <div class="login-top">
+                <h4 style="color:#FF0000">新用户注册</h4>
+                <h5>尊敬的用户，欢迎您回来！</h5>
+            </div>
+            <div class="login-bottom">
+               <form method="post" action="/user/register/" onsubmit="return register();">
+                    <div class="login-input-box">
+                        {% csrf_token %}
+
+                    <input type="text" id="uname" name="uname" value="" onblur="checkUname(this.value)" class="login-admin active" placeholder="邮箱注册">
+                    <span style="color:red;" id="aSpan"></span>
+
+                    <input type="password" id="pwd" name="pwd" value="" class="login-password">
+                    <span style="color:red;" id="pSpan"></span>
+
+                    <button class="login-btn" style="color: white;text-decoration: none;cursor: pointer">注册</button>
+                </div>
+               </form>
+                <div class="login-img">
+                    <img src="/static/login_05.png" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block footerjs %}
+
+
+    <script>
+        function isEmail(str){
+            var reg = /^[a-zA-Z0-9_-]{6,}@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+            return reg.test(str);
+        }
+
+         //用户名唯一校验
+        function checkUname(username){
+            var flag = false;
+            $.ajax({
+                url:'/user/checkUname/',
+                type:'GET',
+                async:false,
+                data:{'uname':username},
+                success:function(result){
+                    var cflag = result.flag;
+                    if(cflag){
+                       flag = true;
+                       $('#aSpan').html('用户名已存在！')
+                    }
+                }
+
+
+            });
+
+            return flag;
+        }
+
+        function register(){
+            //获取输入框的值
+            var account = $('#uname').val();
+            var password = $('#pwd').val();
+
+            //简单校验
+            if(account.length<6||!isEmail(account)||checkUname(account)){
+                $('#aSpan').text('格式不正确');
+                return false;
+            }
+
+            if(password.length<6){
+                $('#pSpan').text('密码长度不能小于六位');
+                return false;
+            }
+
+            // 将密码框内容进行MD5加密
+            var hex_pwd = hex_md5(password);
+            $('#pwd').val(hex_pwd);
+            return true;
+
+        }
+
+
+
+    </script>
+
+
+{% endblock %}

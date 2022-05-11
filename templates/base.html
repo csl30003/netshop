@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/login.css">
+    <link rel="stylesheet" href="/static/index.css">
+    <link rel="stylesheet" href="/static/detail.css">
+    <link rel="stylesheet" href="/static/carts.css">
+    <link rel="stylesheet" href="/static/reset.css">
+    <link rel="stylesheet" href="/static/mygxin.css">
+    <script src="/static/jquery.min.js"></script>
+    <script src="/static/carts.js"></script>
+
+    {% block headerjs %}
+
+    {% endblock %}
+
+
+</head>
+
+<body style="background: white;">
+
+<div class="head">
+    <div class="head-in">
+        <ul class="options">
+            <li class="sub"><a href="/">回到首页</a></li>
+
+            <li class="sub"><a href="http://127.0.0.1:8000/?category=2#">客户服务</a></li>
+            <li class="sub"><a href="/cart/queryAll/">我的购物车</a></li>
+        </ul>
+
+        {% if suser != None %}
+        <div class="register">欢迎<a href="/user/center/" style="color: red;">{{ suser.uname }}</a></div>
+        {% else %}
+        <div class="register"><a href="/user/register/">免费注册</a></div>
+        <div class="sign"><a href="/user/login/">登录</a></div>
+        {% endif %}
+
+
+    </div>
+</div>
+<div class="search" style="background: white;">
+    <ul class="items">
+        <li class="item">
+            <a href="http://127.0.0.1:8000/?category=2#">
+                <img src="/static/1_09.png">
+                <p>10:00开抢</p>
+            </a>
+        </li>
+        <li class="item">
+            <a href="http://127.0.0.1:8000/?category=2#">
+                <img src="/static/1_11.png">
+                <p>买手砍价</p>
+            </a>
+        </li>
+        <li class="item">
+            <a href="http://127.0.0.1:8000/?category=2#">
+                <img src="/static/1_13.png">
+                <p>验货质检</p>
+            </a>
+        </li>
+    </ul>
+    <div class="input">
+        <form method="get" action="/search/">
+            <input type="search" name="search" placeholder="搜索" required>
+            <button type="submit" style="background: url(/static/1_06.png); width:40px;height:40px"></button>
+        </form>
+    </div>
+</div>
+
+
+{% block main %}
+
+{% endblock %}
+
+
+{% block footerjs %}
+
+{% endblock %}
+
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+

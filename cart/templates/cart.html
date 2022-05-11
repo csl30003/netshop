@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block title %}购物车{% endblock %}
+
+
+{% block main %}
+
+
+    <section class="cartMain">
+        <div class="cartMain_hd">
+            <ul class="order_lists cartTop">
+                <li class="list_chk">
+                    <!--所有商品全选-->
+                    <input type="checkbox" id="all" class="whole_check" style="display: inline-block;position:relative;left: -8px;top: 4px">
+
+                    全选
+                </li>
+                <li class="list_con">商品信息</li>
+                <li class="list_info">商品参数</li>
+                <li class="list_price">单价</li>
+                <li class="list_amount">数量</li>
+                <li class="list_sum">金额</li>
+                <li class="list_op">操作</li>
+            </ul>
+        </div>
+
+        <div class="cartBox">
+            <div class="order_content">
+                {% for cart in cartlist %}
+
+                     <ul style="position: relative" class="order_lists" goodsid="{{ cart.goodsid }}" sizeid="{{ cart.sizeid }}" colorid="{{ cart.colorid }}">
+                        <li class="list_chk">
+                            <input type="checkbox" id="checkbox_2" class="son_check" style="display: inline-block;position:absolute;left: 21px;top: 54px">
+
+                        </li>
+                        <li class="list_con">
+                            <div class="list_img"><a href="javascript:;"><img src="/media/{{ cart.getColor.colorurl }}" alt="" width="300" height="90"></a></div>
+                            <div class="list_text"><a href="javascript:;">{{ cart.getGoods.gname }}</a></div>
+                        </li>
+                        <li class="list_info">
+                            <p>颜色：{{ cart.getColor.colorname }}</p>
+                            <p>尺寸：{{ cart.getSize.sname }}</p>
+                        </li>
+                        <li class="list_price">
+                            <p class="price">￥{{ cart.getGoods.price }}</p>
+                        </li>
+                        <li class="list_amount">
+                            <div class="amount_box">
+                                <a href="javascript:;" class="reduce reSty" goodsid="{{ cart.goodsid }}" sizeid="{{ cart.sizeid }}" colorid="{{ cart.colorid }}">-</a>
+                                <input type="text" value="{{ cart.count }}" class="sum" readonly="">
+                                <a href="javascript:;" class="plus" goodsid="{{ cart.goodsid }}" sizeid="{{ cart.sizeid }}" colorid="{{ cart.colorid }}">+</a>
+                            </div>
+                        </li>
+                        <li class="list_sum">
+                            <p class="sum_price">￥{{ cart.getTotalPrice }}</p>
+                        </li>
+                        <li class="list_op">
+                            <p class="del"><a href="javascript:;" class="delBtn"  goodsid="{{ cart.goodsid }}" sizeid="{{ cart.sizeid }}" colorid="{{ cart.colorid }}">移除商品</a></p>
+                        </li>
+                    </ul>
+
+
+                {% endfor %}
+
+
+
+            </div>
+        </div>
+        <!--底部-->
+        <div class="bar-wrapper">
+            <div class="bar-right">
+                <div class="piece">已选商品<strong class="piece_num" id="all_count">0</strong>件</div>
+                <div class="totalMoney">共计: <strong class="total_text" id="all_price">0.00</strong></div>
+                <div class="calBtn"><a href="javascript:;" id="jiesuan">结算</a></div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="model_bg" style="display: none;"></section>
+    <section class="my_model" style="display: none;">
+        <p class="title">删除宝贝<span class="closeModel">X</span></p>
+        <p>您确认要删除该宝贝吗？</p>
+        <div class="opBtn"><a href="javascript:;" class="dialog-sure">确定</a><a href="javascript:;" class="dialog-close">关闭</a>
+        </div>
+    </section>
+    {% csrf_token %}
+
+
+{% endblock %}
+
+
+{% block footerjs %}
+
+
+
+    <script>
+        $('.plus').click(function(event){
+            <!--将数据同步到服务器-->
+            var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val()
+            var goodsid = $(this).attr('goodsid')
+            var colorid = $(this).attr('colorid')
+            var sizeid = $(this).attr('sizeid')
+
+
+            var data={
+                goodsid:goodsid,
+                colorid:colorid,
+                sizeid:sizeid,
+                csrfmiddlewaretoken:csrfmiddlewaretoken,
+                flag:'plus'
+            }
+            $.ajax({
+                async:false,
+                url:'/cart/',
+                data:data,
+                type:'post',
+                success:function(data) {
+
+                },
+                error:function(){
+                    <!--按钮设置了两个点击事件-->
+
+                    event.stopImmediatePropagation()
+                }
+
+            })
+        })
+          $('.reduce').click(function(event){
+            <!--将数据同步到服务器-->
+            if ($(this).next('input').val()<=1){
+                event.stopImmediatePropagation()
+                return;
+            }
+            var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val()
+            var goodsid = $(this).attr('goodsid')
+            var colorid = $(this).attr('colorid')
+            var sizeid = $(this).attr('sizeid')
+
+            var data={
+                goodsid:goodsid,
+                colorid:colorid,
+                sizeid:sizeid,
+                csrfmiddlewaretoken:csrfmiddlewaretoken,
+                flag:'minus'
+            }
+
+            $.ajax({
+                async:false,
+                url:'/cart/',
+                type:'post',
+                data:data,
+                success:function(data) {
+
+                },
+                error:function(){
+                    <!--按钮设置了两个点击事件-->
+
+                    event.stopImmediatePropagation()
+                }
+
+            })
+        })
+        $('.delBtn').click(function(){
+            var goodsid= $(this).attr('goodsid');
+            var colorid= $(this).attr('colorid');
+            var sizeid= $(this).attr('sizeid');
+            $('.dialog-sure').attr('goodsid',goodsid).attr('colorid',colorid).attr('sizeid',sizeid)
+        })
+
+
+        $('.dialog-sure').click(function(event){
+            var goodsid= $(this).attr('goodsid');
+            var colorid= $(this).attr('colorid');
+            var sizeid= $(this).attr('sizeid');
+            var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+
+            var data={
+                goodsid:goodsid,
+                colorid:colorid,
+                sizeid:sizeid,
+                csrfmiddlewaretoken:csrfmiddlewaretoken,
+                flag:'delete'
+            }
+
+            $.ajax({
+                type:'post',
+                url:'/cart/',
+                data:data,
+                async:false,
+                success:function(result) {
+
+                },
+                error:function(event){
+                    //停止事件传播
+                    event.stopImmediatePropagation()
+                }
+
+            })
+        })
+
+        //在购物车页面点击登录按钮后回转到购物车页面
+        $('.sign > a').click(function(event){
+            // 获取登录超链接的href属性值
+            var link = $(this).attr('href')
+            // 重新赋值给href属性
+            $(this).attr('href',link+"?redirect=cart")
+        })
+
+        //单击结算按钮
+        $('#jiesuan').click(function(){
+
+            // 获取所有购物项前的复选框
+            var cks = $('.son_check')
+            // 定义一个数组
+            var cartitem = []
+
+            $.each(cks,function(index,ck){
+                if($(ck).prop('checked')){
+                    var goodsid = $(ck).parents('.order_lists').attr('goodsid')
+                    var sizeid = $(ck).parents('.order_lists').attr('sizeid')
+                    var colorid = $(ck).parents('.order_lists').attr('colorid')
+
+
+
+                    cartitem.push(JSON.stringify({'goodsid':goodsid,'sizeid':sizeid,'colorid':colorid}))
+
+
+                }
+            })
+
+
+            if(cartitem.length==0){
+                return;
+            }
+
+
+
+            var url = '/order/?cartitems='+cartitem;
+            $(this).attr('href',url);
+
+
+        })
+
+    </script>
+
+
+
+{% endblock %}

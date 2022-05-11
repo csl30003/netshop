@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}搜索{% endblock %}
+
+{% block headerjs %}
+    <style>
+        .pageCls{
+            font-size: 28px;
+            color: pink;
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+
+
+<div class="goods-model">
+        <div class="goods-content">
+           {% for good in goods %}
+
+                    <div class="good">
+                        <a href="/goodsdetails/{{ good.id }}">
+                            <img src="/media/{{ good.getGImg }}" width="285px" height="285px">
+                            <p class="name">{{ good.gname }}</p>
+                            <div class="price">
+                                <i>￥</i>
+                                <p class="big">{{ good.price }}</p>
+                                <s>￥{{ good.oldprice }}</s>
+                            </div>
+                            <div class="sale">
+                                    特卖
+                            </div>
+                        </a>
+                        </div>
+
+            {% endfor %}
+        </div>
+    </div>
+
+
+{% endblock %}
